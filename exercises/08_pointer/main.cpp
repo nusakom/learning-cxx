@@ -1,12 +1,24 @@
-﻿﻿#include "../exercise.h"
+﻿#include <iostream>
+#include <cassert>
 
-// READ: 数组向指针退化 <https://zh.cppreference.com/w/cpp/language/array#%E6%95%B0%E7%BB%84%E5%88%B0%E6%8C%87%E9%92%88%E7%9A%84%E9%80%80%E5%8C%96>
+// 辅助宏定义：用于检查条件，如果不成立则报错
+#define ASSERT(condition, message) \
+    if (!(condition)) { \
+        std::cerr << "Assertion failed: " << message << std::endl; \
+        std::abort(); \
+    }
+
 bool is_fibonacci(int *ptr, int len, int stride) {
     ASSERT(len >= 3, "`len` should be at least 3");
-    // TODO: 编写代码判断从 ptr 开始，每 stride 个元素取 1 个元素，组成长度为 n 的数列是否满足
+
+    // 检查从 ptr 开始，每 stride 个元素取 1 个元素，是否符合斐波那契数列
     int i = 0;
-    for (int count = 2; count < len; ++count){
-        if (ptr[i + 2 * stride] != ptr[i] + ptr[i + stride]){
+    for (int count = 2; count < len; ++count) {
+        // 打印调试信息，查看当前比较的元素
+        std::cout << "Checking: " << ptr[i] << " + " << ptr[i + stride] 
+                  << " == " << ptr[i + 2 * stride] << std::endl;
+
+        if (ptr[i + 2 * stride] != ptr[i] + ptr[i + stride]) {
             return false;
         }
         i += stride;
@@ -19,6 +31,7 @@ int main(int argc, char **argv) {
     int arr0[]{0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55},
         arr1[]{0, 1, 2, 3, 4, 5, 6},
         arr2[]{99, 98, 4, 1, 7, 2, 11, 3, 18, 5, 29, 8, 47, 13, 76, 21, 123, 34, 199, 55, 322, 0, 0};
+
     // clang-format off
     ASSERT( is_fibonacci(arr0    , sizeof(arr0) / sizeof(*arr0)    , 1),         "arr0 is Fibonacci"    );
     ASSERT( is_fibonacci(arr0 + 2, sizeof(arr0) / sizeof(*arr0) - 4, 1), "part of arr0 is Fibonacci"    );
@@ -30,5 +43,6 @@ int main(int argc, char **argv) {
     ASSERT(!is_fibonacci(arr2 + 3, 10                              , 2), "guard check"                  );
     ASSERT(!is_fibonacci(arr2 + 1, 10                              , 2), "guard check"                  );
     // clang-format on
+
     return 0;
 }
