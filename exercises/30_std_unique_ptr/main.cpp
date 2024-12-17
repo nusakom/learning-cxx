@@ -1,75 +1,48 @@
-﻿﻿#include "../exercise.h"
-#include <memory>
-#include <string>
-#include <vector>
-#include <cstring>
+﻿#include "../exercise.h"
+#include <map>
 
-// READ: `std::unique_ptr` <https://zh.cppreference.com/w/cpp/memory/unique_ptr>
+// READ: `std::map` <https://zh.cppreference.com/w/cpp/container/map>
+// READ: `std::unordered_map` <https://zh.cppreference.com/w/cpp/container/unordered_map>
 
-std::vector<std::string> RECORDS;
-
-class Resource {
-    std::string _records;
-
-public:
-    void record(char record) {
-        _records.push_back(record);
-    }
-
-    ~Resource() {
-        RECORDS.push_back(_records);
-    }
-};
-
-using Unique = std::unique_ptr<Resource>;
-Unique reset(Unique ptr) {
-    if (ptr) {
-        ptr->record('r');
-    }
-    return std::make_unique<Resource>();
-}
-Unique drop(Unique ptr) {
-    if (ptr) {
-        ptr->record('d');
-    }
-    return nullptr;
-}
-Unique forward(Unique ptr) {
-    if (ptr) {
-        ptr->record('f');
-    }
-    return ptr;
+// 检查给定键是否存在于 map 中
+template<class k, class v>
+bool key_exists(std::map<k, v> const &map, k const &key) {
+    // 使用 map.find(key) 来判断键是否存在
+    return map.find(key) != map.end();
 }
 
+// 设置键值对，若键已存在，则更新值
+template<class k, class v>
+void set(std::map<k, v> &map, k key, v value) {
+    // 使用 map[key] = value 来插入或更新键值对
+    map[key] = value;
+}
+
+// ---- 不要修改以下代码 ----
 int main(int argc, char **argv) {
-    std::vector<std::string> problems[3];
+    using namespace std::string_literals;
 
-    drop(forward(reset(nullptr)));
-    problems[0] = std::move(RECORDS);
+    std::map<std::string, std::string> secrets;
 
-    forward(drop(reset(forward(forward(reset(nullptr))))));
-    problems[1] = std::move(RECORDS);
+    // 插入初始键值对
+    set(secrets, "hello"s, "world"s);
+    // 验证 "hello" 是否存在
+    ASSERT(key_exists(secrets, "hello"s), "\"hello\" should be in `secrets`");
+    // 验证 "foo" 不存在
+    ASSERT(!key_exists(secrets, "foo"s), "\"foo\" should not be in `secrets`");
 
-    drop(drop(reset(drop(reset(reset(nullptr))))));
-    problems[2] = std::move(RECORDS);
+    // 插入其他键值对
+    set(secrets, "foo"s, "bar"s);
+    set(secrets, "Infini"s, "Tensor"s);
 
-    // ---- 不要修改以上代码 ----
+    // 验证各个键的值是否正确
+    ASSERT(secrets["hello"] == "world", "hello -> world");
+    ASSERT(secrets["foo"] == "bar", "foo -> bar");
+    ASSERT(secrets["Infini"] == "Tensor", "Infini -> Tensor");
 
-    std::vector<const char *> answers[]{
-        {"fd"},
-        // TODO: 分析 problems[1] 中资源的生命周期，将记录填入 `std::vector`
-        {"d", "ffr"},
-        {"d", "d", "r"},
-    };
-
-    // ---- 不要修改以下代码 ----
-
-    for (auto i = 0; i < 3; ++i) {
-        ASSERT(problems[i].size() == answers[i].size(), "wrong size");
-        for (auto j = 0; j < problems[i].size(); ++j) {
-            ASSERT(std::strcmp(problems[i][j].c_str(), answers[i][j]) == 0, "wrong location");
-        }
-    }
+    // 更新已有键 "hello" 的值
+    set(secrets, "hello"s, "developer"s);
+    ASSERT(secrets["hello"] == "developer", "hello -> developer");
 
     return 0;
 }

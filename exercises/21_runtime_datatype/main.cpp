@@ -1,4 +1,4 @@
-﻿﻿#include "../exercise.h"
+﻿#include "../exercise.h"
 #include <cmath>
 
 enum class DataType {
@@ -25,11 +25,11 @@ T sigmoid(T x) {
 
 TaggedUnion sigmoid_dyn(TaggedUnion x) {
     TaggedUnion ans{x.type};
-    // TODO: 根据 type 调用 sigmoid
+    // 根据 type 调用 sigmoid
     if (x.type == DataType::Float) {
-        ans.f = sigmoid<float>(x.f);
+        ans.f = sigmoid(x.f);  // 自动推导为 float
     } else {
-        ans.d = sigmoid(x.d);
+        ans.d = sigmoid(x.d);  // 自动推导为 double
     }
     return ans;
 }
