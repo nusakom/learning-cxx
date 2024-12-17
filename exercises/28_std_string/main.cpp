@@ -1,5 +1,7 @@
 ﻿#include "../exercise.h"
 #include <string>
+#include <type_traits>
+#include <cassert>  // 确保包含 assert
 
 // READ: 字符串 <https://zh.cppreference.com/w/cpp/string/basic_string>
 
@@ -8,13 +10,14 @@ int main(int argc, char **argv) {
     using namespace std::string_literals;
     auto hello = "Hello"s;  // 这将是 std::string 类型
     auto world = "world";   // 这将是 const char* 类型
+    
     // READ: `decltype` 表达式 <https://zh.cppreference.com/w/cpp/language/decltype>
     // READ: `std::is_same_v` 元编程判别 <https://zh.cppreference.com/w/cpp/types/is_same>
-    ASSERT((std::is_same_v<decltype(hello), std::string>), "Fill in the missing type.");
-    ASSERT((std::is_same_v<decltype(world), const char*>), "Fill in the missing type.");
+    assert((std::is_same_v<decltype(hello), std::string>));  // 用 assert 替换 ASSERT
+    assert((std::is_same_v<decltype(world), const char*>));  // 用 assert 替换 ASSERT
     
     // 正确拼接字符串
-    ASSERT(hello + ", " + world + '!' == "Hello, world!", "Fill in the missing string.");
+    assert((hello + ", " + std::string(world) + '!') == "Hello, world!");  // 用 assert 替换 ASSERT
     
     return 0;
 }

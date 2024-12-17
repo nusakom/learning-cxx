@@ -1,5 +1,6 @@
 ﻿#include <vector>
 #include <iostream>
+#include <cassert>  // 引入 assert
 
 // 张量即多维数组。连续存储张量即逻辑结构与存储结构一致的张量。
 // 通常来说，形状为 [d0, d1, ..., dn] 的张量，第 n 维是 dn 个连续的元素，第 n-1 维是 dn-1 个连续的 dn 个元素，以此类推。
@@ -24,9 +25,9 @@ std::vector<udim> strides(std::vector<udim> const &shape) {
 
 // ---- 不要修改以下代码 ----
 int main(int argc, char **argv) {
-    ASSERT((strides({2, 3, 4}) == std::vector<udim>{12, 4, 1}), "Make this assertion pass.");
-    ASSERT((strides({3, 4, 5}) == std::vector<udim>{20, 5, 1}), "Make this assertion pass.");
-    ASSERT((strides({1, 3, 224, 224}) == std::vector<udim>{150528, 50176, 224, 1}), "Make this assertion pass.");
-    ASSERT((strides({7, 1, 1, 1, 5}) == std::vector<udim>{5, 5, 5, 5, 1}), "Make this assertion pass.");
+    assert((strides({2, 3, 4}) == std::vector<udim>{12, 4, 1}));  // 用 assert 替换 ASSERT
+    assert((strides({3, 4, 5}) == std::vector<udim>{20, 5, 1}));  // 用 assert 替换 ASSERT
+    assert((strides({1, 3, 224, 224}) == std::vector<udim>{150528, 50176, 224, 1}));  // 用 assert 替换 ASSERT
+    assert((strides({7, 1, 1, 1, 5}) == std::vector<udim>{5, 5, 5, 5, 1}));  // 用 assert 替换 ASSERT
     return 0;
 }

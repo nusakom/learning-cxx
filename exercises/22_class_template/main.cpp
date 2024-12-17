@@ -1,6 +1,7 @@
 ﻿#include "../exercise.h"
 #include <cstring>
 #include <stdexcept>
+#include <iostream>
 
 template<class T>
 struct Tensor4D {
@@ -12,10 +13,9 @@ struct Tensor4D {
         unsigned int size = 1;
         for (int i = 0; i < 4; ++i) {
             shape[i] = shape_[i];
-        }
-        for (int i = 0; i < 4; ++i) {
             size *= shape[i];
         }
+
         data = new T[size];
         std::memcpy(data, data_, size * sizeof(T));
     }
@@ -40,7 +40,7 @@ struct Tensor4D {
 
         unsigned int this_index[4] = {0};
         unsigned int others_index[4] = {0};
-        
+
         // 逐个维度进行加法运算
         for (unsigned int i = 0; i < shape[0]; ++i) {
             this_index[0] = i;
@@ -75,12 +75,12 @@ int main(int argc, char **argv) {
     {
         unsigned int shape[]{1, 2, 3, 4};
         int data[]{
-             1,  2,  3,  4,
-             5,  6,  7,  8,
-             9, 10, 11, 12,
-            13, 14, 15, 16,
-            17, 18, 19, 20,
-            21, 22, 23, 24
+            1,  2,  3,  4,
+            5,  6,  7,  8,
+            9, 10, 11, 12,
+           13, 14, 15, 16,
+           17, 18, 19, 20,
+           21, 22, 23, 24
         };
         auto t0 = Tensor4D<int>(shape, data);
         auto t1 = Tensor4D<int>(shape, data);
@@ -114,12 +114,12 @@ int main(int argc, char **argv) {
     {
         unsigned int s0[]{1, 2, 3, 4};
         double d0[]{
-             1,  2,  3,  4,
-             5,  6,  7,  8,
-             9, 10, 11, 12,
-            13, 14, 15, 16,
-            17, 18, 19, 20,
-            21, 22, 23, 24
+            1,  2,  3,  4,
+            5,  6,  7,  8,
+            9, 10, 11, 12,
+           13, 14, 15, 16,
+           17, 18, 19, 20,
+           21, 22, 23, 24
         };
         unsigned int s1[]{1, 1, 1, 1};
         double d1[]{1};
