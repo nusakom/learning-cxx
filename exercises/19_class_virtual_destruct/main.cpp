@@ -65,4 +65,4 @@ int main(int argc, char **argv) {
     ASSERT(B::num_b == 0, "Every B was destroyed");
 
     return 0;
-}
+}s

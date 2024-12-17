@@ -33,4 +33,5 @@ int main(int argc, char **argv) {
         ASSERT(std::strcmp(arr.data(), "Hello, InfiniTensor!") == 0, "Fill in the correct value.");
     }
     return 0;
+    
 }
