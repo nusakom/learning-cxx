@@ -1,66 +1,77 @@
 #include "../exercise.h"
 
-// READ: 左值右值（概念）<https://learn.microsoft.com/zh-cn/cpp/c-language/l-value-and-r-value-expressions?view=msvc-170>
-// READ: 左值右值（细节）<https://zh.cppreference.com/w/cpp/language/value_category>
-// READ: 关于移动语义 <https://learn.microsoft.com/zh-cn/cpp/cpp/rvalue-reference-declarator-amp-amp?view=msvc-170#move-semantics>
-// READ: 如果实现移动构造 <https://learn.microsoft.com/zh-cn/cpp/cpp/move-constructors-and-move-assignment-operators-cpp?view=msvc-170>
+// READ: 派生类 <https://zh.cppreference.com/w/cpp/language/derived_class>
 
-// READ: 移动构造函数 <https://zh.cppreference.com/w/cpp/language/move_constructor>
-// READ: 移动赋值 <https://zh.cppreference.com/w/cpp/language/move_assignment>
-// READ: 运算符重载 <https://zh.cppreference.com/w/cpp/language/operators>
+static int i = 0;
 
-class DynFibonacci {
-    size_t *cache;
-    int cached;
+struct X {
+    int x;
 
-public:
-    // TODO: 实现动态设置容量的构造器
-    DynFibonacci(int capacity): cache(new ?), cached(?) {}
-
-    // TODO: 实现移动构造器
-    DynFibonacci(DynFibonacci &&) noexcept = delete;
-
-    // TODO: 实现移动赋值
-    // NOTICE: ⚠ 注意移动到自身问题 ⚠
-    DynFibonacci &operator=(DynFibonacci &&) noexcept = delete;
-
-    // TODO: 实现析构器，释放缓存空间
-    ~DynFibonacci();
-
-    // TODO: 实现正确的缓存优化斐波那契计算
-    size_t operator[](int i) {
-        for (; false; ++cached) {
-            cache[cached] = cache[cached - 1] + cache[cached - 2];
-        }
-        return cache[i];
+    X(int x_) : x(x_) {
+        std::cout << ++i << ". " << "X(" << x << ')' << std::endl;
     }
-
-    // NOTICE: 不要修改这个方法
-    size_t operator[](int i) const {
-        ASSERT(i <= cached, "i out of range");
-        return cache[i];
+    X(X const &other) : x(other.x) {
+        std::cout << ++i << ". " << "X(X const &) : x(" << x << ')' << std::endl;
     }
+    ~X() {
+        std::cout << ++i << ". " << "~X(" << x << ')' << std::endl;
+    }
+};
+struct A {
+    int a;
 
-    // NOTICE: 不要修改这个方法
-    bool is_alive() const {
-        return cache;
+    A(int a_) : a(a_) {
+        std::cout << ++i << ". " << "A(" << a << ')' << std::endl;
+    }
+    A(A const &other) : a(other.a) {
+        std::cout << ++i << ". " << "A(A const &) : a(" << a << ')' << std::endl;
+    }
+    ~A() {
+        std::cout << ++i << ". " << "~A(" << a << ')' << std::endl;
+    }
+};
+struct B : public A {
+    X x;
+
+    B(int b) : A(1), x(b) {
+        std::cout << ++i << ". " << "B(" << a << ", X(" << x.x << "))" << std::endl;
+    }
+    B(B const &other) : A(other.a), x(other.x) {
+        std::cout << ++i << ". " << "B(B const &) : A(" << a << "), x(X(" << x.x << "))" << std::endl;
+    }
+    ~B() {
+        std::cout << ++i << ". " << "~B(" << a << ", X(" << x.x << "))" << std::endl;
     }
 };
 
 int main(int argc, char **argv) {
-    DynFibonacci fib(12);
-    ASSERT(fib[10] == 55, "fibonacci(10) should be 55");
+    X x = X(1);
+    A a = A(2);
+    B b = B(3);
 
-    DynFibonacci const fib_ = std::move(fib);
-    ASSERT(!fib.is_alive(), "Object moved");
-    ASSERT(fib_[10] == 55, "fibonacci(10) should be 55");
+    // TODO: 补全三个类型的大小
+    static_assert(sizeof(X) == 4, "There is an int in X");
+    static_assert(sizeof(A) == 4, "There is an int in A");
+    static_assert(sizeof(B) == 8, "B is an A with an X");
 
-    DynFibonacci fib0(6);
-    DynFibonacci fib1(12);
+    i = 0;
+    std::cout << std::endl
+              << "-------------------------" << std::endl
+              << std::endl;
 
-    fib0 = std::move(fib1);
-    fib0 = std::move(fib0);
-    ASSERT(fib0[10] == 55, "fibonacci(10) should be 55");
+    // 这是不可能的，A 无法提供 B 增加的成员变量的值
+    // B ba = A(4);
+
+    // 这也是不可能的，因为 A 是 B 的一部分，就好像不可以把套娃的外层放进内层里。
+    A ab = B(5);// 然而这个代码可以编译和运行！
+    // THINK: 观察打印出的信息，推测把大象放进冰箱分几步？
+    // THINK: 这样的代码是“安全”的吗？
+    // NOTICE: 真实场景中不太可能出现这样的代码
+
+    i = 0;
+    std::cout << std::endl
+              << "-------------------------" << std::endl
+              << std::endl;
 
     return 0;
 }

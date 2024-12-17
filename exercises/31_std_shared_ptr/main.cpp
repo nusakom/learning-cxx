@@ -1,45 +1,21 @@
-﻿#include "../exercise.h"
-#include <memory>
+﻿﻿#include "../exercise.h"
+#include <algorithm>
+#include <string>
+#include <vector>
 
-// READ: `std::shared_ptr` <https://zh.cppreference.com/w/cpp/memory/shared_ptr>
-// READ: `std::weak_ptr` <https://zh.cppreference.com/w/cpp/memory/weak_ptr>
+// READ: `std::transform` <https://zh.cppreference.com/w/cpp/algorithm/transform>
+// READ: `std::vector::begin` <https://zh.cppreference.com/w/cpp/container/vector/begin>
 
-// TODO: 将下列 `?` 替换为正确的值
 int main(int argc, char **argv) {
-    auto shared = std::make_shared<int>(10);
-    std::shared_ptr<int> ptrs[]{shared, shared, shared};
-
-    std::weak_ptr<int> observer = shared;
-    ASSERT(observer.use_count() == ?, "");
-
-    ptrs[0].reset();
-    ASSERT(observer.use_count() == ?, "");
-
-    ptrs[1] = nullptr;
-    ASSERT(observer.use_count() == ?, "");
-
-    ptrs[2] = std::make_shared<int>(*shared);
-    ASSERT(observer.use_count() == ?, "");
-
-    ptrs[0] = shared;
-    ptrs[1] = shared;
-    ptrs[2] = std::move(shared);
-    ASSERT(observer.use_count() == ?, "");
-
-    std::ignore = std::move(ptrs[0]);
-    ptrs[1] = std::move(ptrs[1]);
-    ptrs[1] = std::move(ptrs[2]);
-    ASSERT(observer.use_count() == ?, "");
-
-    shared = observer.lock();
-    ASSERT(observer.use_count() == ?, "");
-
-    shared = nullptr;
-    for (auto &ptr : ptrs) ptr = nullptr;
-    ASSERT(observer.use_count() == ?, "");
-
-    shared = observer.lock();
-    ASSERT(observer.use_count() == ?, "");
-
+    std::vector<int> val{8, 13, 21, 34, 55};
+    // TODO: 调用 `std::transform`，将 `v` 中的每个元素乘以 2，并转换为字符串，存入 `ans`
+    std::vector<std::string> ans(val.size());
+    std::transform(val.begin(), val.end(), ans.begin(), [](int x){ return std::to_string(x * 2);});
+    ASSERT(ans.size() == val.size(), "ans size should be equal to val size");
+    ASSERT(ans[0] == "16", "ans[0] should be 16");
+    ASSERT(ans[1] == "26", "ans[1] should be 26");
+    ASSERT(ans[2] == "42", "ans[2] should be 42");
+    ASSERT(ans[3] == "68", "ans[3] should be 68");
+    ASSERT(ans[4] == "110", "ans[4] should be 110");
     return 0;
 }
